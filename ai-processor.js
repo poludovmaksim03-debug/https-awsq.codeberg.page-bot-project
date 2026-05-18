@@ -71,5 +71,3 @@ class AIProcessor {
         }
     }
 }
-
-export default AIProcessor;
