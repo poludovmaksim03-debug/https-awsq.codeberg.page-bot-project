@@ -68,5 +68,5 @@ class apiKey {
         this.addMessage(randomResponse, false);
     }
 };
-const apiKey = "sk-WmuuzBk7uVOh97xUMbTalt3Pp306h";
+const apiKey = "process.env.sk-WmuuzBk7uVOh97xUMbTalt3Pp306h";
 export default apiKey;
