@@ -1,5 +1,5 @@
 import DocumentScanner from "./scanner.js";
-import ChatBot from "./chatbot.js";
+import apiKey from "./chatbot.js";
 
 class HomeworkBotApp {
     constructor() {
