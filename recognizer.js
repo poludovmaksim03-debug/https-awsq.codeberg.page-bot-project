@@ -1,4 +1,4 @@
-import Tesseract from "Tesseract.js";
+import Tesseract from 'tesseract.js';
 
 class TextRecognizer {
     constructor() {
@@ -6,13 +6,16 @@ class TextRecognizer {
     }
 
     async initialize() {
-        this.worker = await Tesseract.createWorker('eng');
+        this.worker = await Tesseract.createWorker('eng+rus', {
+            logger: m => console.log(m) // Логирование прогресса
+        });
     }
 
     async recognizeText(imageDataUrl) {
         try {
             const result = await this.worker.recognize(imageDataUrl, {
-                tessedit_pageseg_mode: 6, // Assume a single uniform block of text
+                tessedit_pageseg_mode: 6, // Единый блок текста
+                preserve_interword_spaces: 1
             });
             return result.data.text;
         } catch (error) {
@@ -28,4 +31,6 @@ class TextRecognizer {
     }
 }
 
-export default TextRecognizer
+export default TextRecognizer;
+
+
