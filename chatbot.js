@@ -100,4 +100,4 @@ class ChatBot {
     }
 }
 
-
+export default ChatBot;
