@@ -1,7 +1,8 @@
-class apiKey {
-    constructor() {
+class ChatBot {
+    constructor(aiProcessor) {
         this.messages = [];
         this.chatMessages = document.getElementById('chatMessages');
+        this.aiProcessor = aiProcessor;
     }
 
     addMessage(text, isUser = false) {
@@ -17,8 +18,11 @@ class apiKey {
         this.addMessage(message, true);
 
         // Обрабатываем разные типы запросов
-        if (message.toLowerCase().includes('распознай')) {
+        if (message.toLowerCase().includes('распознай') ||
+            message.toLowerCase().includes('сканир')) {
             await this.handleRecognitionRequest();
+        } else if (message.toLowerCase().includes('реш')) {
+            await this.handleSolutionRequest(message);
         } else if (message.toLowerCase().includes('помощь')) {
             this.sendHelpMessage();
         } else {
@@ -43,15 +47,42 @@ class apiKey {
 
             await recognizer.cleanup();
         } catch (error) {
-            console.error('Ошибка обработки запроса:', error);
+            console.error('Ошибка распознавания:', error);
             this.addMessage('Произошла ошибка при распознавании текста.', false);
+        }
+    }
+
+    async handleSolutionRequest(message) {
+        try {
+            const inputText = document.getElementById('recognizedText').value;
+
+            if (!inputText.trim()) {
+                this.addMessage('Сначала отсканируйте домашнее задание.', false);
+                return;
+            }
+
+            this.addMessage('Анализирую задание и генерирую решение...', false);
+
+            const result = await this.aiProcessor.processHomework(inputText);
+
+            // Отображаем решение от AI
+            document.getElementById('aiSolution').innerHTML = `
+                <strong>Анализ:</strong> ${result.analysis.subject} (уверенность: ${result.analysis.confidence})<br><br>
+                <strong>Решение:</strong><br>${result.solution.replace(/\n/g, '<br>')}
+            `;
+
+            this.addMessage('Решение сгенерировано. Смотрите ниже.', false);
+        } catch (error) {
+            console.error('Ошибка обработки AI:', error);
+            this.addMessage('Произошла ошибка при генерации решения.', false);
         }
     }
 
     sendHelpMessage() {
         const helpText = `
 Доступные команды:
-- "Распознай ДЗ" — запустить сканирование и распознавание домашнего задания
+- "Распознай ДЗ" или "Сканируй" — запустить сканирование и распознавание домашнего задания
+- "Реши" — получить решение от AI на основе распознанного текста
 - "Помощь" — показать эту справку
 - Просто задайте вопрос по домашнему заданию
         `;
@@ -67,6 +98,6 @@ class apiKey {
         const randomResponse = responses[Math.floor(Math.random() * responses.length)];
         this.addMessage(randomResponse, false);
     }
-};
-const apiKey = "process.env.sk-WmuuzBk7uVOh97xUMbTalt3Pp306h";
-export default apiKey;
+}
+
+export default ChatBot;
