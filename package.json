@@ -1,0 +1,13 @@
+{
+  "name": "homework-bot",
+  "version": "1.0.0",
+  "description": "Чат‑бот для сканирования и распознавания домашнего задания",
+  "main": "bot64.html",
+  "type": "module",
+  "scripts": {
+    "start": "live-server"
+  },
+  "dependencies": {
+    "tesseract.js": "^4.1.1"
+  }
+}
