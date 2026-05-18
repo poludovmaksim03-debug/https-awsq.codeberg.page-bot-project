@@ -18,7 +18,7 @@ class DocumentScanner {
             this.video.srcObject = this.stream;
         } catch (error) {
             console.error('Ошибка доступа к камере:', error);
-            alert('Не удалось получить доступ к камере');
+            alert('Не удалось получить доступ к камере. Проверьте разрешения.');
         }
     }
 
@@ -32,6 +32,7 @@ class DocumentScanner {
 
     toggleFullscreen() {
         const element = document.documentElement;
+
         if (!document.fullscreenElement) {
             if (element.requestFullscreen) {
                 element.requestFullscreen();
@@ -53,7 +54,18 @@ class DocumentScanner {
                 document.msExitFullscreen();
             }
         }
+
+        // Обновляем класс для стилизации
+        document.body.classList.toggle('fullscreen');
+    }
+
+    stopCamera() {
+        if (this.stream) {
+            this.stream.getTracks().forEach(track => track.stop());
+        }
     }
 }
 
 export default DocumentScanner;
+
+
