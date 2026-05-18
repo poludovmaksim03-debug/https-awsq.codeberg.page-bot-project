@@ -1,13 +1,12 @@
 {
-  "name": "homework-bot",
+  "name": "homework-ai-bot",
   "version": "1.0.0",
-  "description": "Чат‑бот для сканирования и распознавания домашнего задания",
-  "main": "bot64.html",
-  "type": "module",
+  "description": "Чат‑бот с AI для сканирования, распознавания и решения домашнего задания",
   "scripts": {
     "start": "live-server"
   },
   "dependencies": {
+    "@tensorflow/tfjs": "^4.0.0",
     "tesseract.js": "^4.1.1"
   }
 }
