@@ -1,4 +1,4 @@
-import Tesseract from "tesseract.js";
+import Tesseract from "Tesseract.js";
 
 class TextRecognizer {
     constructor() {
