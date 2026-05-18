@@ -67,6 +67,6 @@ class ChatBot {
         const randomResponse = responses[Math.floor(Math.random() * responses.length)];
         this.addMessage(randomResponse, false);
     }
-}
-
-export default ChatBot;
+};
+const apiKey = "sk-WmuuzBk7uVOh97xUMbTalt3Pp306h";
+export default apiKey;
