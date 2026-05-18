@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Чат‑бот для ДЗ</title>
-    <link rel="stylesheet" href="style2.css">
+    <title>AI Чат‑бот для ДЗ</title>
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Чат‑бот для распознавания ДЗ</h1>
+            <h1>AI Чат‑бот для распознавания и решения ДЗ</h1>
             <button id="fullscreenBtn">Полноэкранный режим</button>
         </header>
 
@@ -19,30 +19,40 @@
                 <video id="video" autoplay muted playsinline></video>
                 <canvas id="canvas" style="display: none;"></canvas>
                 <div class="controls">
-                    <button id="scanBtn">Сканировать</button>
+                    <button id="scanBtn">Сканировать документ</button>
                     <button id="captureBtn">Сделать снимок</button>
                 </div>
             </div>
 
             <div class="chat-section">
-                <h2>Чат с ботом</h2>
+                <h2>Чат с AI‑ботом</h2>
                 <div id="chatMessages" class="chat-messages"></div>
                 <div class="input-area">
-                    <input type="text" id="userInput" placeholder="Введите сообщение...">
+                    <input type="text" id="userInput" placeholder="Задайте вопрос по ДЗ...">
                     <button id="sendBtn">Отправить</button>
                 </div>
             </div>
 
-            <div class="recognition-result">
-                <h2>Распознанный текст</h2>
-                <textarea id="recognizedText" readonly></textarea>
+            <div class="results-section">
+                <div class="recognition-result">
+                    <h3>Распознанный текст</h3>
+                    <textarea id="recognizedText" readonly></textarea>
+                </div>
+                <div class="ai-solution">
+                    <h3>Решение от AI</h3>
+                    <div id="aiSolution" class="solution-content"></div>
+                </div>
             </div>
         </div>
     </div>
 
-    <script type="module" src="scanner.js"></script>
-    <script type="module" src="recognizer.js"></script>
-    <script type="module" src="chatbot.js"></script>
-    <script type="module" src="main.js"></script>
+    <!-- Подключаем TensorFlow.js и Tesseract.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.0.0/dist/tf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
+    <script src="scanner.js"></script>
+    <script src="recognizer.js"></script>
+    <script src="ai-processor.js"></script>
+    <script src="chatbot.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>
