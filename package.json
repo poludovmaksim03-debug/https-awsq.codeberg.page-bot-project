@@ -1,6 +1,7 @@
 {
   "name": "homework-ai-bot",
   "version": "1.0.0",
+  "type": "module",
   "description": "Чат‑бот с AI для сканирования, распознавания и решения домашнего задания",
   "scripts": {
     "start": "live-server"
