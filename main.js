@@ -1,10 +1,14 @@
-import DocumentScanner from "./scanner.js";
-import apiKey from "./chatbot.js";
+import DocumentScanner from './scanner.js';
+import TextRecognizer from './recognizer.js';
+import AIProcessor from './ai-processor.js';
+import ChatBot from './chatbot.js';
 
-class HomeworkBotApp {
+class HomeworkAIBotApp {
     constructor() {
         this.scanner = new DocumentScanner();
-        this.chatBot = new apiKey();
+        this.recognizer = new TextRecognizer();
+        this.aiProcessor = new AIProcessor();
+        this.chatBot = new ChatBot(this.aiProcessor);
         this.initEventListeners();
     }
 
@@ -20,13 +24,12 @@ class HomeworkBotApp {
                 const imageDataUrl = this.scanner.captureFrame();
                 this.chatBot.addMessage('Документ захвачен!', false);
 
-                // Передаём изображение в распознаватель
-                const recognizer = new (await import('./recognizer.js')).default();
-                await recognizer.initialize();
-                const recognizedText = await recognizer.recognizeText(imageDataUrl);
+                // Распознаём текст
+                await this.recognizer.initialize();
+                const recognizedText = await this.recognizer.recognizeText(imageDataUrl);
                 document.getElementById('recognizedText').value = recognizedText;
                 this.chatBot.addMessage(`Распознанный текст:\n${recognizedText}`, false);
-                await recognizer.cleanup();
+                await this.recognizer.cleanup();
             } catch (error) {
                 console.error('Ошибка сканирования:', error);
                 this.chatBot.addMessage('Ошибка при сканировании документа.', false);
@@ -58,12 +61,15 @@ class HomeworkBotApp {
 
     async init() {
         await this.scanner.startCamera();
-        this.chatBot.addMessage('Привет! Я чат‑бот для распознавания домашнего задания. Используйте команду "Помощь" для начала.', false);
+        await this.aiProcessor.loadModel();
+        this.chatBot.addMessage('Привет! Я AI чат‑бот для распознавания и решения домашнего задания. Используйте команду "Помощь" для начала.', false);
     }
 }
 
 // Инициализация приложения
 document.addEventListener('DOMContentLoaded', () => {
-    const app = new HomeworkBotApp();
+    const app = new HomeworkAIBotApp();
     app.init();
-})
+});
+
+
