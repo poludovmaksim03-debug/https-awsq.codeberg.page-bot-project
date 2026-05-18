@@ -66,6 +66,7 @@ class DocumentScanner {
     }
 }
 
+export default DocumentScanner;
 
 
 
