@@ -4,7 +4,7 @@ import ChatBot from "./chatbot.js";
 class HomeworkBotApp {
     constructor() {
         this.scanner = new DocumentScanner();
-        this.chatBot = new ChatBot();
+        this.chatBot = new apiKey();
         this.initEventListeners();
     }
 
