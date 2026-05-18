@@ -1,4 +1,4 @@
-class ChatBot {
+class apiKey {
     constructor() {
         this.messages = [];
         this.chatMessages = document.getElementById('chatMessages');
