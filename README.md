@@ -28,7 +28,7 @@
                 <div id="chatMessages" class="chat-messages"></div>
                 <div class="input-area">
                     <input type="text" id="userInput" placeholder="Задайте вопрос по ДЗ...">
-                    <button id="sendBtn">Отправить</button>
+                    <button id="sendBtn">Отправить</button> 
                 </div>
             </div>
 
