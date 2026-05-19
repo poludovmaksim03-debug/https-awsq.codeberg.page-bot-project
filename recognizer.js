@@ -1,4 +1,4 @@
-class TextRecognizer {
+class TextRecognizer { 
     constructor() {
         this.worker = null; 
     }
