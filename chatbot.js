@@ -62,17 +62,18 @@ class ChatBot {
                         top: this.elements.chatMessages.scrollHeight,
 behavior: 'smooth'
 });
-} catch (e) {
+}; 
+catch (e) {
 this.elements.chatMessages.scrollTop = this.elements.chatMessages.scrollHeight;
-}
-} catch (error) {
+};
+} 
+catch (error) {
 console.error('Ошибка прокрутки:', error);
 }
 }
-
 async processUserMessage(message) {
 if (this.isProcessing) {
-this.addMessage(‘Подождите, я обрабатываю предыдущий запрос…’, false);
+this.addMessage('Подождите, я обрабатываю предыдущий запрос…', false);
 return;
 }
 
