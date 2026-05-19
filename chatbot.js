@@ -3,7 +3,7 @@ class ChatBot {
         this.validateDependencies(aiProcessor);
 
 
-        this.aiProcessor = aiProcessor;
+        this.aiProcessor = aiProcessor; 
         this.messages = [];
         this.isProcessing = false; // Флаг обработки запроса
 
