@@ -62,7 +62,7 @@ class ChatBot {
                         top: this.elements.chatMessages.scrollHeight,
 behavior: 'smooth'
 });
-}; 
+ 
 catch (e) {
 this.elements.chatMessages.scrollTop = this.elements.chatMessages.scrollHeight;
 };
