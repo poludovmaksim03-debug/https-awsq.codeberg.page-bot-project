@@ -203,7 +203,7 @@ class DocumentScanner {
 }
 
 // Экспорт для использования в других модулях
-export default DocumentScanner;
+export default DocumentScanner; 
 
 
 
