@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', async function() {
     try {
         // Инициализация компонентов
-        const aiProcessor =  AIprocessor(ai-processor.js);
-        const chatBot = new ChatBot(AIprocessor);
+        const aiProcessor = new AIProcessor();
+        const chatBot = new ChatBot(aiProcessor);
         const scanner = new DocumentScanner();
 
         // Запуск камеры при загрузке
@@ -60,11 +60,10 @@ document.addEventListener('DOMContentLoaded', async function() {
             }
         });
 
-        chatBot.addMessage('Привет! Я AI‑бот для помощи с домашним заданием. Готов распознать и решить задачи!', false);
+                chatBot.addMessage('Привет! Я AI‑бот для помощи с домашним заданием. Готов распознать и решить задачи!', false);
 
         // Инициализация AI‑модели
         await aiProcessor.loadModel();
-
 
         console.log('Все компоненты успешно инициализированы');
     } catch (error) {
@@ -72,6 +71,6 @@ document.addEventListener('DOMContentLoaded', async function() {
         alert('Произошла ошибка при запуске бота. Проверьте консоль браузера.');
     }
 });
- 
+
 
 
