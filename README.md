@@ -46,12 +46,12 @@
     </div>
 
     <!-- Подключаем TensorFlow.js и Tesseract.js --> 
-    <script type="./https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.0.0/dist/tf.min.js"></script>
-    <script type="./https://cdn.jsdelivr.net/npm/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
-    <script type="./js/scanner.js"></script>
-    <script type="./js/recognizer.js"></script>
-    <script type="./js/ai-processor.js"></script>
-    <script type="./js/chatbot.js"></script>
-    <script type="./js/main.js"></script>
+    <script type="module" src="./https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.0.0/dist/tf.min.js"></script>
+    <script type="module" src=./https://cdn.jsdelivr.net/npm/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
+    <script type="module" src="./scanner.js"></script>
+    <script type="module" src="./recognizer.js"></script>
+    <script type="module" src="./ai-processor.js"></script>
+    <script type="module" src="./chatbot.js"></script>
+    <script type='module" src="./main.js"></script>
 </body>
 </html> 
