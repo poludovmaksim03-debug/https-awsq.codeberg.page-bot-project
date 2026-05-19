@@ -52,6 +52,6 @@
     <script type="module" src="./recognizer.js"></script>
     <script type="module" src="./ai-processor.js"></script>
     <script type="module" src="./chatbot.js"></script>
-    <script type='module" src="./main.js"></script>
+    <script type="module" src="./main.js"></script>
 </body>
 </html> 
