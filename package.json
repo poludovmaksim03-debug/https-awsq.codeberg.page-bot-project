@@ -1,16 +1,14 @@
 {
   "name": "homework-ai-bot",
   "version": "1.0.0",
-  "description": "AI чат‑бот для распознавания и решения домашних заданий",
-  "main": "bot64.html",
+  "description": "Чат‑бот с AI для сканирования, распознавания и решения домашнего задания",
   "scripts": {
-    "start": "http-server -p 8080"
+    "start": "live-server"
   },
-  "devDependencies": {
-    "http-server": "^14.1.1"
-  },
-  "keywords": ["ai", "chatbot", "homework", "ocr", "education"],
-  "author": "Your Name",
-  "license": "MIT"
+  "dependencies": {
+    "@tensorflow/tfjs": "^4.0.0",
+    "tesseract.js": "^4.1.1"
+  }
 }
+
 
