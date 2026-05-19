@@ -15,12 +15,21 @@ class HomeworkAIBotApp {
     initEventListeners() {
         // Кнопки интерфейса
         document.getElementById('fullscreenBtn').addEventListener('click', () => {
-            this.scanner.toggleFullscreen();
+            this.toggleFullscreen();
         });
 
         document.getElementById('scanBtn').addEventListener('click', async () => {
             try {
                 this.chatBot.addMessage('Запуск сканирования документа...', false);
+
+                // Гарантируем, что камера запущена
+                if (!this.scanner.isCameraActive) {
+                    const cameraStarted = await this.scanner.startCamera();
+                    if (!cameraStarted) {
+                return;
+            }
+        }
+
                 const imageDataUrl = this.scanner.captureFrame();
                 this.chatBot.addMessage('Документ захвачен!', false);
 
@@ -32,44 +41,21 @@ class HomeworkAIBotApp {
                 await this.recognizer.cleanup();
             } catch (error) {
                 console.error('Ошибка сканирования:', error);
-                this.chatBot.addMessage('Ошибка при сканировании документа.', false);
+                this.chatBot.addMessage('Ошибка при сканировании документа. Проверьте камеру и попробуйте ещё раз.', false);
             }
         });
 
         document.getElementById('captureBtn').addEventListener('click', () => {
-            const imageDataUrl = this.scanner.captureFrame();
-            this.chatBot.addMessage('Снимок сделан!', false);
-        });
-
-        // Чат
-        document.getElementById('sendBtn').addEventListener('click', () => {
-            const input = document.getElementById('userInput');
-            const message = input.value.trim();
-            if (message) {
-                this.chatBot.processUserMessage(message);
-                input.value = '';
+            try {
+                const imageDataUrl = this.scanner.captureFrame();
+                this.chatBot.addMessage('Снимок сделан!', false);
+            } catch (error) {
+                console.error('Ошибка захвата кадра:', error);
+                this.chatBot.addMessage('Не удалось сделать снимок. Проверьте камеру.', false);
             }
-        });
 
-        // Обработка Enter в поле ввода
-        document.getElementById('userInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') {
-                document.getElementById('sendBtn').click();
-            }
         });
-    }
-
-    async init() {
-        await this.scanner.startCamera();
-        await this.aiProcessor.loadModel();
-        this.chatBot.addMessage('Привет! Я AI чат‑бот для распознавания и решения домашнего задания. Используйте команду "Помощь" для начала.', false);
-    }
+    };
 }
-
-// Инициализация приложения
-document.addEventListener('DOMContentLoaded', () => {
-    const app = new HomeworkAIBotApp();
-    app.init();
-});
 
 
