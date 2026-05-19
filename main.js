@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', async function() {
     try {
         // Инициализация компонентов
-        const aiProcessor = new AIProcessor();
+        const aiProcessor =  AIProcessor();
         const chatBot = new ChatBot(aiProcessor);
         const scanner = new DocumentScanner();
 
