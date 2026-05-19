@@ -1,4 +1,4 @@
-class ChatBot {
+class ChatBot { 
     constructor(aiProcessor) {
         // Проверяем обязательные зависимости
         if (!aiProcessor) {
