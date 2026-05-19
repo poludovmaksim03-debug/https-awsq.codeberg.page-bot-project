@@ -46,7 +46,6 @@
     </div>
 
     <!-- Подключаем TensorFlow.js и Tesseract.js --> 
-    <script type="module" src="./https://cdn.jsdelivr.net/npm/tesseract.js@4.1.1/dist/tesseract.min.js"></script>
     <script type="module" src="./scanner.js"></script>
     <script type="module" src="./recognizer.js"></script>
     <script type="module" src="./ai-processor.js"></script>
