@@ -1,4 +1,4 @@
-import DocumentScanner from './scanner.js';
+import DocumentScanner from './scanner.js'; 
 import TextRecognizer from './recognizer.js';
 import AIProcessor from './ai-processor.js';
 import ChatBot from './chatbot.js';
