@@ -40,7 +40,7 @@ class TextRecognizer {
     }
 }
 
-export default TextRecognizer;
+export default TextRecognizer; 
 
 
 
