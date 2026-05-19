@@ -1,5 +1,5 @@
 class ChatBot {
-    constructor(aiProcessor) {
+    constructor(aiProcessor) { 
         this.validateDependencies(aiProcessor);
 
 
