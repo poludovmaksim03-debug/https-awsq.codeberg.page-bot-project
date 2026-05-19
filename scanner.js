@@ -205,5 +205,9 @@ class DocumentScanner {
 // Экспорт для использования в других модулях
 export default DocumentScanner; 
 
+// Инициализация при загрузке страницы
+    document.addEventListener('DOMContentLoaded', init());
+    console.log(typeof Tesseract)
+
 
 
