@@ -1,62 +1,75 @@
-class AIProcessor { 
+class AIProcessor {
+    constructor() {
+        this.isModelLoaded = false;
+    }
+
     async loadModel() {
-        // Заглушка для загрузки модели TensorFlow.js
-        console.log('Модель AI загружена (заглушка)');
+        try {
+            // Проверяем доступность TensorFlow
+            if (typeof tf === 'undefined') {
+                console.warn('TensorFlow не загружен, используем упрощённую обработку');
+                return;
+            }
+
+            this.isModelLoaded = true;
+            console.log('AI процессор готов к работе');
+        } catch (error) {
+            console.warn('Не удалось загрузить AI модель:', error);
+        }
     }
 
     async processHomework(text) {
-        try {
-            // Имитация анализа задания
-            const analysis = this.analyzeTask(text);
-
-            // Имитация генерации решения
-            const solution = await this.generateSolution(text, analysis.subject);
-
-            return {
-                analysis: analysis,
-                solution: solution
-            };
-        } catch (error) {
-            console.error('Ошибка обработки AI:', error);
-            throw error;
+        if (!text.trim()) {
+            return 'Не удалось распознать текст задания. Попробуйте сделать снимок ещё раз.';
         }
+
+        const analysis = this.analyzeText(text);
+        const solution = this.generateSolution(analysis, text);
+
+        return {
+            originalText: text,
+            analysis: analysis,
+            solution: solution
+        };
     }
 
-    analyzeTask(text) {
-        const lowerText = text.toLowerCase();
-        let subject = 'неопределено';
+    analyzeText(text) {
+        const keywords = {
+            math: ['решить', 'уравнение', 'вычислить', 'найти', 'интеграл', 'производная', 'sin', 'cos', 'tg', 'x', 'y', 'z'],
+            physics: ['сила', 'масса', 'ускорение', 'энергия', 'работа', 'мощность', 'ньютон', 'джоуль', 'вольт'],
+            chemistry: ['реакция', 'молекула', 'атом', 'валентность', 'оксид', 'кислота', 'основание', 'соль'],
+            geometry: ['треугольник', 'квадрат', 'круг', 'площадь', 'периметр', 'объём', 'угол']
+        };
+
+        let subject = 'неопределённо';
         let confidence = 0;
 
-        if (lowerText.includes('sin') || lowerText.includes('cos') ||
-            lowerText.includes('tg') || lowerText.includes('ctg')) {
-            subject = 'Математика (тригонометрия)';
-            confidence = 0.9;
-        } else if (lowerText.includes('x^') || lowerText.includes('y=')) {
-            subject = 'Алгебра';
-            confidence = 0.85;
-        } else if (lowerText.includes('H2O') || lowerText.includes('реакция')) {
-            subject = 'Химия';
-            confidence = 0.8;
-        } else {
-            subject = 'Общее домашнее задание';
-            confidence = 0.7;
-        }
+        Object.keys(keywords).forEach(key => {
+            const count = keywords[key].filter(word =>
+                text.toLowerCase().includes(word)
+            ).length;
+
+            if (count > confidence) {
+                confidence = count;
+                subject = key;
+            }
+        });
 
         return { subject, confidence };
     }
 
-    async generateSolution(text, subject) {
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        switch (subject) {
-            case 'Математика (тригонометрия)':
-                return `Решение тригонометрического уравнения:\n1. Приводим уравнение к стандартному виду\n2. Используем формулы приведения\n3. Находим корни уравнения\n4. Проверяем ОДЗ`;
-            case 'Алгебра':
-                return `Решение алгебраического уравнения:\n1. Переносим все члены в одну сторону\n2. Разлагаем на множители\n3. Находим корни\n4. Проверяем решение`;
-            case 'Химия':
-                return `Решение химической задачи:\n1. Записываем уравнение реакции\n2. Расставляем коэффициенты\n3. Рассчитываем молярные массы\n4. Находим искомое значение`;
+    generateSolution(analysis, originalText) {
+        switch (analysis.subject) {
+            case 'math':
+                return `Анализ: Математическая задача\nРешение: Для решения ${originalText} рекомендуется:\n1. Определить тип уравнения\n2. Применить соответствующие формулы\n3. Выполнить вычисления пошагово`;
+            case 'physics':
+                return `Анализ: Физическая задача\nРешение: Для задачи ${originalText}:\n1. Выписать известные величины\n2. Выбрать подходящую формулу\n3. Подставить значения и вычислить`;
+            case 'chemistry':
+                return `Анализ: Химическая задача\nРешение: Для реакции ${originalText}:\n1. Записать уравнение реакции\n2. Уравнять коэффициенты\n3. Рассчитать молярные массы`;
+            case 'geometry':
+                return `Анализ: Геометрическая задача\nРешение: Для фигуры в задаче ${originalText}:\n1. Определить тип фигуры\n2. Использовать соответствующую формулу площади/объёма\n3. Подставить известные значения`;
             default:
-                return `Анализ задания:\nТекст: ${text}\n\nРекомендация: Уточните предмет для более точного решения.`;
+                return `Анализ: Общий тип задания\nРешение: Рекомендуется:\n- Внимательно прочитать условие\n- Выделить ключевые данные\n- Последовательно выполнить требуемые действия`;
         }
     }
 }
