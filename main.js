@@ -1,4 +1,4 @@
-document.addEventListener('DOMContentLoaded', async function() {
+document.addEventListener('DOMContentLoaded', async function() { 
     try {
         // Инициализация компонентов
         const aiProcessor = new AIProcessor();
