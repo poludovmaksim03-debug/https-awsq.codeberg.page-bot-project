@@ -49,4 +49,4 @@
     <!-- Подключаем TensorFlow.js и Tesseract.js -->
     <script type="module" src="./main.js"></script>
 </body>
-</html>
+</html> 
