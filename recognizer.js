@@ -1,6 +1,6 @@
 class TextRecognizer {
     constructor() {
-        this.worker = null;
+        this.worker = null; 
     }
 
     async initialize(language = 'eng+rus') {
