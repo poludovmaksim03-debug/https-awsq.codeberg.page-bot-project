@@ -1,76 +1,62 @@
-document.addEventListener('DOMContentLoaded', async function() { 
-    try {
-        // Инициализация компонентов
-        const aiProcessor = new AIProcessor();
-        const chatBot = new ChatBot(aiProcessor);
-        const scanner = new DocumentScanner();
+import DocumentScanner from './scanner.js';
+import TextRecognizer from './recognizer.js';
+import AIProcessor from './ai-processor.js';
+import ChatBot from './chatbot.js';
 
-        // Запуск камеры при загрузке
-        await scanner.startCamera();
+class HomeworkAIBotApp {
+    constructor() {
+        this.scanner = new DocumentScanner();
+        this.recognizer = new TextRecognizer();
+        this.aiProcessor = new AIProcessor();
+        this.chatBot = new ChatBot(this.aiProcessor);
+        this.initEventListeners();
+    }
 
-        // Обработчики событий
-        document.getElementById('sendBtn').addEventListener('click', function() {
-            const input = document.getElementById('userInput');
-            const message = input.value.trim();
-            if (message) {
-                chatBot.processUserMessage(message);
-                input.value = '';
+    initEventListeners() {
+        // Кнопки интерфейса
+        document.getElementById('fullscreenBtn').addEventListener('click', () => {
+            this.toggleFullscreen();
+        });
+
+        document.getElementById('scanBtn').addEventListener('click', async () => {
+            try {
+                this.chatBot.addMessage('Запуск сканирования документа...', false);
+
+                // Гарантируем, что камера запущена
+                if (!this.scanner.isCameraActive) {
+                    const cameraStarted = await this.scanner.startCamera();
+                    if (!cameraStarted) {
+                return;
+            }
+        }
+
+                const imageDataUrl = this.scanner.captureFrame();
+                this.chatBot.addMessage('Документ захвачен!', false);
+
+                // Распознаём текст
+                await this.recognizer.initialize();
+                const recognizedText = await this.recognizer.recognizeText(imageDataUrl);
+                document.getElementById('recognizedText').value = recognizedText;
+                this.chatBot.addMessage(`Распознанный текст:\n${recognizedText}`, false);
+                await this.recognizer.cleanup();
+            } catch (error) {
+                console.error('Ошибка сканирования:', error);
+                this.chatBot.addMessage('Ошибка при сканировании документа. Проверьте камеру и попробуйте ещё раз.', false);
             }
         });
 
-        document.getElementById('scanBtn').addEventListener('click', async function() {
-            chatBot.addMessage('Запускаю сканирование...', false);
-            await chatBot.handleRecognitionRequest();
-        });
-
-        document.getElementById('captureBtn').addEventListener('click', async function() {
+        document.getElementById('captureBtn').addEventListener('click', () => {
             try {
-                const imageDataUrl = scanner.captureFrame();
-                chatBot.addMessage('Кадр захвачен, распознаю текст...', false);
-
-                const recognizer = new TextRecognizer();
-                await recognizer.initialize();
-                const recognizedText = await recognizer.recognizeText(imageDataUrl);
-
-                if (chatBot.elements.recognizedText) {
-                    chatBot.elements.recognizedText.value = recognizedText;
-                }
-                chatBot.addMessage(`Распознанный текст:\n${recognizedText}`, false);
-                await recognizer.cleanup();
+                const imageDataUrl = this.scanner.captureFrame();
+                this.chatBot.addMessage('Снимок сделан!', false);
             } catch (error) {
                 console.error('Ошибка захвата кадра:', error);
-                chatBot.addMessage('Ошибка при захвате кадра.', false);
+                this.chatBot.addMessage('Не удалось сделать снимок. Проверьте камеру.', false);
             }
+
         });
-
-        document.getElementById('fullscreenBtn').addEventListener('click', function() {
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen();
-                this.textContent = '⛶ Выйти из полноэкранного режима';
-            } else {
-                document.exitFullscreen();
-                this.textContent = '⛶ Полноэкранный режим';
-            }
-        });
-
-        // Обработка ввода по Enter
-        document.getElementById('userInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                document.getElementById('sendBtn').click();
-            }
-        });
-
-                chatBot.addMessage('Привет! Я AI‑бот для помощи с домашним заданием. Готов распознать и решить задачи!', false);
-
-        // Инициализация AI‑модели
-        await aiProcessor.loadModel();
-
-        console.log('Все компоненты успешно инициализированы');
-    } catch (error) {
-        console.error('Критическая ошибка инициализации:', error);
-        alert('Произошла ошибка при запуске бота. Проверьте консоль браузера.');
-    }
-});
+    };
+}
 
 
 
