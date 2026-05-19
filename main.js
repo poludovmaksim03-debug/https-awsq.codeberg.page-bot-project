@@ -1,8 +1,8 @@
 document.addEventListener('DOMContentLoaded', async function() {
     try {
         // Инициализация компонентов
-        const aiProcessor =  AIProcessor();
-        const chatBot = new ChatBot(aiProcessor);
+        const aiProcessor =  ai-processor.js();
+        const chatBot = new ChatBot(ai-processor.js);
         const scanner = new DocumentScanner();
 
         // Запуск камеры при загрузке
