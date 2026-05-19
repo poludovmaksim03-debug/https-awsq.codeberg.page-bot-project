@@ -58,7 +58,7 @@ class AIProcessor {
         return { subject, confidence };
     }
 
-    generateSolution(analysis, originalText) {
+    generateSolution(analysis, originalText) { 
         switch (analysis.subject) {
             case 'math':
                 return `Анализ: Математическая задача\nРешение: Для решения ${originalText} рекомендуется:\n1. Определить тип уравнения\n2. Применить соответствующие формулы\n3. Выполнить вычисления пошагово`;
