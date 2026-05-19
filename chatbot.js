@@ -1,221 +1,241 @@
-class ChatBot { 
+class ChatBot {
     constructor(aiProcessor) {
-        // Проверяем обязательные зависимости
-        if (!aiProcessor) {
-            throw new Error('AIProcessor не передан в конструктор ChatBot');
-        }
-
+        this.validateDependencies(aiProcessor);
         this.aiProcessor = aiProcessor;
         this.messages = [];
-
-        // Безопасное получение элементов DOM
-        this.chatMessages = document.getElementById('chatMessages');
-        this.recognizedText = document.getElementById('recognizedText');
-        this.aiSolution = document.getElementById('aiSolution');
-
-        // Проверка наличия обязательных элементов интерфейса
-        if (!this.chatMessages) {
-            console.error('Элемент #chatMessages не найден в DOM');
-        }
-        if (!this.recognizedText) {
-            console.error('Элемент #recognizedText не найден в DOM');
-        }
-        if (!this.aiSolution) {
-            console.error('Элемент #aiSolution не найден в DOM');
-        }
+        this.isProcessing = false;
+        this.elements = this.getDOMElements();
+        this.bindMethods();
     }
 
-    /**
-     * Безопасное добавление сообщения в чат
-     */
+    validateDependencies(aiProcessor) {
+        if (!aiProcessor) throw new Error('AIProcessor обязателен для ChatBot');
+        if (typeof aiProcessor.processHomework !== 'function') throw new Error('AIProcessor должен иметь processHomework');
+    }
+
+    getDOMElements() {
+        return {
+            chatMessages: document.getElementById('chatMessages'),
+            recognizedText: document.getElementById('recognizedText'),
+            aiSolution: document.getElementById('aiSolution'),
+            userInput: document.getElementById('userInput'),
+            sendBtn: document.getElementById('sendBtn')
+        };
+    }
+
+    bindMethods() {
+        ['addMessage', 'processUserMessage'].forEach(method => {
+            this[method] = this[method].bind(this);
+        });
+    }
+
     addMessage(text, isUser = false) {
         try {
-            // Валидация входных данных
-            if (!text || typeof text !== 'string') {
-                console.warn('Попытка добавить некорректное сообщение:', text);
-                return;
-            }
+            if (!text || typeof text !== 'string' || !text.trim()) return false;
 
-            if (!this.chatMessages) {
-                console.error('Не удалось добавить сообщение: элемент чата не найден');
-                return;
-            }
+            const trimmedText = text.trim();
+            if (!this.elements.chatMessages) return false;
 
             const messageDiv = document.createElement('div');
             messageDiv.className = `message ${isUser ? 'user-message' : 'bot-message'}`;
-            messageDiv.textContent = text;
-            this.chatMessages.appendChild(messageDiv);
+            messageDiv.textContent = trimmedText;
+            this.elements.chatMessages.appendChild(messageDiv);
+            this.smoothScrollToBottom();
 
-            // Плавная прокрутка к последнему сообщению
-            setTimeout(() => {
-                this.chatMessages.scrollTop = this.chatMessages.scrollHeight;
-            }, 100);
-
-            // Сохраняем сообщение в истории
             this.messages.push({
-                text: text,
+                text: trimmedText,
                 isUser: isUser,
-                timestamp: new Date()
+                timestamp: new Date().toISOString()
             });
+            return true;
         } catch (error) {
-            console.error('Ошибка при добавлении сообщения:', error);
+            console.error('Ошибка добавления сообщения:', error);
+            return false;
         }
     }
 
-    /**
-     * Обработка сообщения пользователя с полной обработкой ошибок
-     */
-    async processUserMessage(message) {
+    smoothScrollToBottom() {
         try {
-            // Валидация входного сообщения
-            if (!message || typeof message !== 'string' || !message.trim()) {
-                this.addMessage('Пожалуйста, введите сообщение.', false);
-                return;
-            }
+            if (this.elements.chatMessages) {
+                try {
+                    this.elements.chatMessages.scrollTo({
+                        top: this.elements.chatMessages.scrollHeight,
+behavior: ‘smooth’
+});
+} catch (e) {
+this.elements.chatMessages.scrollTop = this.elements.chatMessages.scrollHeight;
+}
+} catch (error) {
+console.error(‘Ошибка прокрутки:’, error);
+}
+}
 
-            const trimmedMessage = message.trim();
+async processUserMessage(message) {
+if (this.isProcessing) {
+this.addMessage(‘Подождите, я обрабатываю предыдущий запрос…’, false);
+return;
+}
 
-            // Добавляем сообщение пользователя
-            this.addMessage(trimmedMessage, true);
+try {
+this.isProcessing = true;
+this.disableInput();
 
-            // Нормализуем сообщение для анализа команд
-            const normalizedMessage = trimmedMessage.toLowerCase();
+if (!message || typeof message !== ‘string’ || !message.trim()) {
+this.addMessage(‘Пожалуйста, введите сообщение.’, false);
+return;
+}
 
-            // Обрабатываем разные типы запросов
-            if (normalizedMessage.includes('распознай') ||
-                normalizedMessage.includes('сканир')) {
-                await this.handleRecognitionRequest();
-            } else if (normalizedMessage.includes('реш')) {
-                await this.handleSolutionRequest(trimmedMessage);
-            } else if (normalizedMessage.includes('помощь')) {
-                this.sendHelpMessage();
-            } else {
-                this.sendDefaultResponse();
-            }
-        } catch (error) {
-            console.error('Критическая ошибка в processUserMessage:', error);
-            this.addMessage('Произошла непредвиденная ошибка. Попробуйте позже.', false);
-        }
-    }
+const trimmedMessage = message.trim();
+this.addMessage(trimmedMessage, true);
 
-    /**
-     * Обработка запроса на распознавание
-     */
-    async handleRecognitionRequest() {
-        try {
-            this.addMessage('Запускаю сканирование документа...', false);
+await this.handleCommand(trimmedMessage.toLowerCase(), trimmedMessage);
+} catch (error) {
+console.error(‘Критическая ошибка в processUserMessage:’, error);
+this.addMessage(‘Произошла непредвиденная ошибка. Попробуйте позже.’, false);
+} finally {
+this.isProcessing = false;
+this.enableInput();
+}
+}
 
-            const scanner = new DocumentScanner();
+async handleCommand(normalizedMessage, originalMessage) {
+if (normalizedMessage.includes(‘распознай’) ||
+normalizedMessage.includes(‘сканир’)) {
+await this.handleRecognitionRequest();
+} else if (normalizedMessage.includes(‘реш’)) {
+await this.handleSolutionRequest();
+} else if (normalizedMessage.includes(‘помощь’)) {
+this.sendHelpMessage();
+} else {
+this.sendDefaultResponse();
+}
+}
 
-            // Гарантируем, что камера запущена
-            if (!scanner.isCameraActive) {
-                const cameraStarted = await scanner.startCamera();
-                if (!cameraStarted) {
-                    this.addMessage('Не удалось запустить камеру. Проверьте разрешения.', false);
-                    return;
-                }
-            }
+async handleRecognitionRequest() {
+try {
+this.addMessage(‘Запускаю сканирование документа…’, false);
 
-            const imageDataUrl = scanner.captureFrame();
-            this.addMessage('Распознаю текст с изображения...', false);
+const scanner = new DocumentScanner();
 
-            const recognizer = new TextRecognizer();
-            await recognizer.initialize();
-            const recognizedText = await recognizer.recognizeText(imageDataUrl);
+if (!scanner.isCameraActive) {
+const cameraStarted = await scanner.startCamera();
+if (!cameraStarted) {
+this.addMessage(‘Не удалось запустить камеру. Проверьте разрешения.’, false);
+return;
+}
+}
 
-            // Показываем распознанный текст
-            if (this.recognizedText) {
-                this.recognizedText.value = recognizedText;
-            }
-            this.addMessage(`Распознанный текст:\n${recognizedText}`, false);
+const imageDataUrl = scanner.captureFrame();
+this.addMessage(‘Распознаю текст с изображения…’, false);
 
-            await recognizer.cleanup();
-        } catch (error) {
-            console.error('Ошибка распознавания:', error);
-            this.addMessage('Произошла ошибка при распознавании текста. Попробуйте ещё раз.', false);
-        }
-    }
+const recognizer = new TextRecognizer();
+await recognizer.initialize();
+const recognizedText = await recognizer.recognizeText(imageDataUrl);
 
-    /**
-     * Обработка запроса на решение задачи
-     */
-    async handleSolutionRequest(message) {
-        try {
-            if (!this.recognizedText) {
-                this.addMessage('Элемент для распознанного текста не найден.', false);
-                return;
-            }
+if (this.elements.recognizedText) {
+this.elements.recognizedText.value = recognizedText;
+}
+this.addMessage(Распознанный текст:\n${recognizedText}, false);
 
-            const inputText = this.recognizedText.value;
+await recognizer.cleanup();
+} catch (error) {
+console.error(‘Ошибка распознавания:’, error);
+this.addMessage(‘Произошла ошибка при распознавании текста. Попробуйте ещё раз.’, false);
+}
+}
 
-            if (!inputText.trim()) {
-                this.addMessage('Сначала отсканируйте домашнее задание.', false);
-                return;
-            }
+async handleSolutionRequest() {
+try {
+if (!this.elements.recognizedText) {
+this.addMessage(‘Элемент для распознанного текста не найден.’, false);
+return;
+}
 
-            this.addMessage('Анализирую задание и генерирую решение...', false);
+const inputText = this.elements.recognizedText.value;
 
-            const result = await this.aiProcessor.processHomework(inputText);
+if (!inputText.trim()) {
+this.addMessage(‘Сначала отсканируйте домашнее задание.’, false);
+return;
+}
 
-            // Отображаем решение от AI
-            if (this.aiSolution) {
-                this.aiSolution.innerHTML = `
-                    <strong>Анализ:</strong> ${result.analysis.subject} (уверенность: ${result.analysis.confidence})<br><br>
-                    <strong>Решение:</strong><br>${result.solution.replace(/\n/g, '<br>')}
-                `;
-            }
+this.addMessage(‘Анализирую задание и генерирую решение…’, false);
 
-            this.addMessage('Решение сгенерировано. Смотрите ниже.', false);
-        } catch (error) {
-            console.error('Ошибка обработки AI:', error);
-            this.addMessage('Произошла ошибка при генерации решения. Попробуйте позже.', false);
-        }
-    }
+const result = await this.aiProcessor.processHomework(inputText);
 
-    /**
-     * Отправка справки
-     */
-    sendHelpMessage() {
-        const helpText = `
+if (this.elements.aiSolution) {
+this.elements.aiSolution.innerHTML =                 <strong>Анализ:</strong> ${result.analysis.subject} (уверенность: ${(result.analysis.confidence * 100).toFixed(1)}%)<br><br>                 <strong>Решение:</strong><br>${result.solution.replace(/\n/g, '<br>')}            ;
+}
+
+this.addMessage(‘Решение сгенерировано. Смотрите ниже.’, false);
+} catch (error) {
+console.error(‘Ошибка обработки AI:’, error);
+this.addMessage(‘Произошла ошибка при генерации решения. Попробуйте позже.’, false);
+}
+}
+
+sendHelpMessage() {
+const helpText = `
 Доступные команды:
-- "Распознай ДЗ" или "Сканируй" — запустить сканирование и распознавание домашнего задания
-- "Реши" — получить решение от AI на основе распознанного текста
-- "Помощь" — показать эту справку
-- Просто задайте вопрос по домашнему заданию
-        `;
-        this.addMessage(helpText, false);
-    }
 
-    /**
-     * Ответ по умолчанию
-     */
-    sendDefaultResponse() {
-        const responses = [
-            'Я готов помочь с вашим домашним заданием! Используйте команду "Распознай ДЗ" для сканирования.',
-            'Чем могу помочь с домашним заданием?',
-            'Отправьте команду "Распознай ДЗ", чтобы я отсканировал и распознал ваше домашнее задание.',
-            'Для начала отсканируйте домашнее задание командой "Распознай ДЗ".'
-        ];
-        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-        this.addMessage(randomResponse, false);
-    }
+“Распознай ДЗ” или “Сканируй” — запустить сканирование и распознавание домашнего задания
 
-    /**
-     * Очистка истории сообщений
-     */
-    clearHistory() {
-        this.messages = [];
-        if (this.chatMessages) {
-            this.chatMessages.innerHTML = '';
-        }
-    }
+“Реши” — получить решение от AI на основе распознанного текста
 
-    /**
-     * Получение истории сообщений
-     */
-    getMessageHistory() {
-        return [...this.messages]; // Возвращаем копию массива
-    }
+“Помощь” — показать эту справку
+
+Просто задайте вопрос по домашнему заданию
+`;
+this.addMessage(helpText, false);
+}
+
+sendDefaultResponse() {
+const responses = [
+‘Я готов помочь с вашим домашним заданием! Используйте команду “Распознай ДЗ” для сканирования.’,
+‘Чем могу помочь с домашним заданием?’,
+‘Отправьте команду “Распознай ДЗ”, чтобы я отсканировал и распознал ваше домашнее задание.’,
+‘Для начала отсканируйте домашнее задание командой “Распознай ДЗ”.’
+];
+const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+this.addMessage(randomResponse, false);
+}
+
+clearHistory() {
+try {
+this.messages = [];
+if (this.elements.chatMessages) {
+this.elements.chatMessages.innerHTML = ‘’;
+}
+} catch (error) {
+console.error(‘Ошибка при очистке истории:’, error);
+}
+}
+
+getMessageHistory() {
+return […this.messages];
+}
+
+disableInput() {
+if (this.elements.userInput && this.elements.sendBtn) {
+this.elements.userInput.disabled = true;
+this.elements.sendBtn.disabled = true;
+this.elements.userInput.placeholder = ‘Обработка…’;
+}
+}
+
+enableInput() {
+if (this.elements.userInput && this.elements.sendBtn) {
+this.elements.userInput.disabled = false;
+this.elements.sendBtn.disabled = false;
+this.elements.userInput.placeholder = ‘Введите сообщение…’;
+}
+}
+
+destroy() {
+this.clearHistory();
+this.elements = null;
+this.aiProcessor = null;
+this.messages = null;
+}
 }
 
 export default ChatBot;
