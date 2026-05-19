@@ -60,13 +60,13 @@ class ChatBot {
                 try {
                     this.elements.chatMessages.scrollTo({
                         top: this.elements.chatMessages.scrollHeight,
-behavior: ‘smooth’
+behavior: 'smooth'
 });
 } catch (e) {
 this.elements.chatMessages.scrollTop = this.elements.chatMessages.scrollHeight;
 }
 } catch (error) {
-console.error(‘Ошибка прокрутки:’, error);
+console.error('Ошибка прокрутки:', error);
 }
 }
 
@@ -80,8 +80,8 @@ try {
 this.isProcessing = true;
 this.disableInput();
 
-if (!message || typeof message !== ‘string’ || !message.trim()) {
-this.addMessage(‘Пожалуйста, введите сообщение.’, false);
+if (!message || typeof message !== 'string' || !message.trim()) {
+this.addMessage('Пожалуйста, введите сообщение.', false);
 return;
 }
 
@@ -90,8 +90,8 @@ this.addMessage(trimmedMessage, true);
 
 await this.handleCommand(trimmedMessage.toLowerCase(), trimmedMessage);
 } catch (error) {
-console.error(‘Критическая ошибка в processUserMessage:’, error);
-this.addMessage(‘Произошла непредвиденная ошибка. Попробуйте позже.’, false);
+console.error('Критическая ошибка в processUserMessage:', error);
+this.addMessage('Произошла непредвиденная ошибка. Попробуйте позже.', false);
 } finally {
 this.isProcessing = false;
 this.enableInput();
@@ -99,12 +99,12 @@ this.enableInput();
 }
 
 async handleCommand(normalizedMessage, originalMessage) {
-if (normalizedMessage.includes(‘распознай’) ||
-normalizedMessage.includes(‘сканир’)) {
+if (normalizedMessage.includes('распознай') ||
+normalizedMessage.includes('сканир')) {
 await this.handleRecognitionRequest();
-} else if (normalizedMessage.includes(‘реш’)) {
+} else if (normalizedMessage.includes('реш')) {
 await this.handleSolutionRequest();
-} else if (normalizedMessage.includes(‘помощь’)) {
+} else if (normalizedMessage.includes('помощь')) {
 this.sendHelpMessage();
 } else {
 this.sendDefaultResponse();
@@ -113,20 +113,20 @@ this.sendDefaultResponse();
 
 async handleRecognitionRequest() {
 try {
-this.addMessage(‘Запускаю сканирование документа…’, false);
+this.addMessage('Запускаю сканирование документа…', false);
 
 const scanner = new DocumentScanner();
 
 if (!scanner.isCameraActive) {
 const cameraStarted = await scanner.startCamera();
 if (!cameraStarted) {
-this.addMessage(‘Не удалось запустить камеру. Проверьте разрешения.’, false);
+this.addMessage('Не удалось запустить камеру. Проверьте разрешения.', false);
 return;
 }
 }
 
 const imageDataUrl = scanner.captureFrame();
-this.addMessage(‘Распознаю текст с изображения…’, false);
+this.addMessage('Распознаю текст с изображения…', false);
 
 const recognizer = new TextRecognizer();
 await recognizer.initialize();
@@ -139,37 +139,37 @@ this.addMessage(Распознанный текст:\n${recognizedText}, false);
 
 await recognizer.cleanup();
 } catch (error) {
-console.error(‘Ошибка распознавания:’, error);
-this.addMessage(‘Произошла ошибка при распознавании текста. Попробуйте ещё раз.’, false);
+console.error('Ошибка распознавания:', error);
+this.addMessage('Произошла ошибка при распознавании текста. Попробуйте ещё раз.', false);
 }
 }
 
 async handleSolutionRequest() {
 try {
 if (!this.elements.recognizedText) {
-this.addMessage(‘Элемент для распознанного текста не найден.’, false);
+this.addMessage('Элемент для распознанного текста не найден.', false);
 return;
 }
 
 const inputText = this.elements.recognizedText.value;
 
 if (!inputText.trim()) {
-this.addMessage(‘Сначала отсканируйте домашнее задание.’, false);
+this.addMessage('Сначала отсканируйте домашнее задание.', false);
 return;
 }
 
-this.addMessage(‘Анализирую задание и генерирую решение…’, false);
+this.addMessage('Анализирую задание и генерирую решение…', false);
 
 const result = await this.aiProcessor.processHomework(inputText);
 
 if (this.elements.aiSolution) {
-this.elements.aiSolution.innerHTML =                 <strong>Анализ:</strong> ${result.analysis.subject} (уверенность: ${(result.analysis.confidence * 100).toFixed(1)}%)<br><br>                 <strong>Решение:</strong><br>${result.solution.replace(/\n/g, '<br>')}            ;
+this.elements.aiSolution.innerHTML = <strong>Анализ:</strong> ${result.analysis.subject} (уверенность: ${(result.analysis.confidence * 100).toFixed(1)}%)<br><br>                 <strong>Решение:</strong><br>${result.solution.replace(/\n/g, '<br>')}            ;
 }
 
-this.addMessage(‘Решение сгенерировано. Смотрите ниже.’, false);
+this.addMessage('Решение сгенерировано. Смотрите ниже.', false);
 } catch (error) {
-console.error(‘Ошибка обработки AI:’, error);
-this.addMessage(‘Произошла ошибка при генерации решения. Попробуйте позже.’, false);
+console.error('Ошибка обработки AI:', error);
+this.addMessage('Произошла ошибка при генерации решения. Попробуйте позже.', false);
 }
 }
 
@@ -190,10 +190,10 @@ this.addMessage(helpText, false);
 
 sendDefaultResponse() {
 const responses = [
-‘Я готов помочь с вашим домашним заданием! Используйте команду “Распознай ДЗ” для сканирования.’,
-‘Чем могу помочь с домашним заданием?’,
-‘Отправьте команду “Распознай ДЗ”, чтобы я отсканировал и распознал ваше домашнее задание.’,
-‘Для начала отсканируйте домашнее задание командой “Распознай ДЗ”.’
+'Я готов помочь с вашим домашним заданием! Используйте команду “Распознай ДЗ” для сканирования.',
+'Чем могу помочь с домашним заданием?',
+'Отправьте команду "Распознай ДЗ", чтобы я отсканировал и распознал ваше домашнее задание.',
+'Для начала отсканируйте домашнее задание командой "Распознай ДЗ".'
 ];
 const randomResponse = responses[Math.floor(Math.random() * responses.length)];
 this.addMessage(randomResponse, false);
@@ -203,10 +203,10 @@ clearHistory() {
 try {
 this.messages = [];
 if (this.elements.chatMessages) {
-this.elements.chatMessages.innerHTML = ‘’;
+this.elements.chatMessages.innerHTML = '';
 }
 } catch (error) {
-console.error(‘Ошибка при очистке истории:’, error);
+console.error('Ошибка при очистке истории:', error);
 }
 }
 
@@ -218,7 +218,7 @@ disableInput() {
 if (this.elements.userInput && this.elements.sendBtn) {
 this.elements.userInput.disabled = true;
 this.elements.sendBtn.disabled = true;
-this.elements.userInput.placeholder = ‘Обработка…’;
+this.elements.userInput.placeholder = 'Обработка…';
 }
 }
 
@@ -226,7 +226,7 @@ enableInput() {
 if (this.elements.userInput && this.elements.sendBtn) {
 this.elements.userInput.disabled = false;
 this.elements.sendBtn.disabled = false;
-this.elements.userInput.placeholder = ‘Введите сообщение…’;
+this.elements.userInput.placeholder = 'Введите сообщение…';
 }
 }
 
