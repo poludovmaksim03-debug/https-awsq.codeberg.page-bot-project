@@ -1,5 +1,5 @@
 class AIProcessor {
-    constructor() {
+    constructor() { 
         this.isModelLoaded = false;
     }
 
