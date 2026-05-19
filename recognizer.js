@@ -42,9 +42,7 @@ class TextRecognizer {
 
 export default TextRecognizer; 
 
-// Инициализация при загрузке страницы
-    document.addEventListener('DOMContentLoaded', init());
-    console.log(typeof Tesseract)
+
 
 
 
