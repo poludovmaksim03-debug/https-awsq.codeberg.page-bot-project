@@ -1,4 +1,4 @@
-class AIProcessor {
+class AIProcessor { 
     async loadModel() {
         // Заглушка для загрузки модели TensorFlow.js
         console.log('Модель AI загружена (заглушка)');
