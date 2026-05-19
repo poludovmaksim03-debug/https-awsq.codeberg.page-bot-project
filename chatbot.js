@@ -1,5 +1,5 @@
-class ChatBot { 
-    constructor(aiProcessor) { 
+class ChatBot {
+    constructor(aiProcessor) {
         this.validateDependencies(aiProcessor);
         this.aiProcessor = aiProcessor;
         this.messages = [];
@@ -60,7 +60,7 @@ class ChatBot {
                 try {
                     this.elements.chatMessages.scrollTo({
                         top: this.elements.chatMessages.scrollHeight,
-                                    behavior: 'smooth'
+                    behavior: 'smooth'
             });
         } catch (e) {
             this.elements.chatMessages.scrollTop = this.elements.chatMessages.scrollHeight;
@@ -238,4 +238,10 @@ destroy() {
 }
 
 export default ChatBot;
+
+
+
+
+
+
 
