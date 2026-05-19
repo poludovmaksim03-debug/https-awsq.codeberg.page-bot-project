@@ -1,4 +1,4 @@
-class DocumentScanner {
+class DocumentScanner { 
     constructor() {
         this.video = document.getElementById('video');
         this.canvas = document.getElementById('canvas');
