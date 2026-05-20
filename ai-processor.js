@@ -7,7 +7,7 @@ class AIProcessor {
         try {
             // Проверяем доступность TensorFlow
             if (typeof tf === 'undefined') {
-                console.warn('TensorFlow не загружен, используем упрощённую обработку');
+                console.warn('TensorFlow доступен');
                 return;
             }
 
